@@ -1,0 +1,27 @@
+# Go build binaries
+/dbase/crud
+/reverse-proxy/proxy
+
+# Docker volumes and runtime data
+clickhouse-init/
+dbase/data/
+reverse-proxy/data/
+app/data/
+crud-data/
+redis-data/
+clickhouse-data/
+
+# OS files
+.DS_Store
+
+# Logs and temp files
+*.log
+*.out
+*.tmp
+
+# Go related
+bin/
+vendor/
+
+# Docker-specific override files
+docker-compose.override.yml

@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    ports:
+      - "9000:9000"
+      - "8123:8123"
+    volumes:
+      - ./clickhouse-init:/docker-entrypoint-initdb.d
+
+    environment:
+      CLICKHOUSE_DB: default
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+      CLICKHOUSE_PASSWORD: ""
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  crud-server:
+    build:
+      context: ./dbase
+    ports:
+      - "3000:3000"
+    volumes:
+      - crud-data:/app/data
+
+  reverse-proxy:
+    build:
+      context: ./reverse-proxy
+    ports:
+      - "8080:8080"
+    depends_on:
+      - crud-server
+      - clickhouse
+      - redis
+    environment:
+      - CLICKHOUSE_HOST=clickhouse
+      - REDIS_HOST=redis
+
+  debug:
+    image: alpine
+    command: sh
+    networks:
+      - default
+    stdin_open: true
+    tty: true
+
+volumes:
+  crud-data:
+  clickhouse-data:
+  redis-data:

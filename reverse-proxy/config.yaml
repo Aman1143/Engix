@@ -1,0 +1,30 @@
+server:
+  listen: 8080
+  worker: 4
+
+  upstreams:
+    - id: node1
+      url: http://crud-server:3000
+
+    - id: node2
+      url: http://crud-server:3000
+
+    - id: node3
+      url: http://crud-server:3000
+
+  headers:
+    - key: x-forward-for
+      value: "$ip"
+
+    - key: Authorization
+      value: "Bearer xyz"
+
+  rules:
+    - path: /get
+      upstreams: [node1]
+
+    - path: /create
+      upstreams: [node2]
+
+    - path: /delete
+      upstreams: [node3]
